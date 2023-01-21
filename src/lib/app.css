@@ -1,0 +1,9 @@
+:root {
+    --background: #101010;
+    --foreground: #ffffff;
+    --secondbackground: #1c1c1c;
+}
+
+body {
+    @apply bg-background text-foreground font-sans;
+}

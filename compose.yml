@@ -1,0 +1,7 @@
+services:
+  nofile:
+    container_name: nofile
+    image: ghcr.io/Odyssey346/nolife:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3070:3000"
