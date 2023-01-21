@@ -30,7 +30,7 @@ jobs:
       - name: 'Build:dockerimage'
         uses: docker/build-push-action@v3
         with:
-          tags: ghcr.io/odyssey346/nofile:latest
+          tags: ghcr.io/odyssey346/nolife:latest
           context: "."
           push: true
           no-cache: true
