@@ -60,7 +60,6 @@ export const actions: Actions = {
 
                 // loop through all the playtime_2weeks and find tf2
                 for (let i = 0; i < tf2RecentPlaytime.response.total_count; i++) {
-                    console.log(tf2RecentPlaytime.response.games[i]);
                     if (tf2RecentPlaytime.response.games[i].appid === 440) {
                         playerTF2RecentPlaytime = tf2RecentPlaytime.response.games[i].playtime_2weeks;
                     }
