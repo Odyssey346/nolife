@@ -44,6 +44,9 @@ export const actions: Actions = {
 
                 // get username
                 const username = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${env.STEAM_KEY}&steamids=${id}`).then((res) => res.json());
+                if (username.response.players[0] === undefined) {
+                    return fail(400, { error: true, message: 'player does not exist' });
+                }
                 playerUsername = username.response.players[0].personaname;
 
                 console.log(playerUsername)
@@ -55,7 +58,7 @@ export const actions: Actions = {
 
                 // if account is private
                 if (tf2RecentPlaytime === undefined || tf2RecentPlaytime === null || tf2RecentPlaytime.response === undefined || tf2RecentPlaytime.response === null || tf2RecentPlaytime.response.games === undefined || tf2RecentPlaytime.response.games === null || tf2RecentPlaytime.response.games.length === 0) {
-                    return { success: true, message: 'has a private account.', playerUsername, id, playerTF2RecentPlaytimeHours: 0 }
+                    return { success: true, message: 'has a private account.', privateAccount: true, playerUsername, id, playerTF2RecentPlaytimeHours: 0 }
                 }
 
                 playerTF2RecentPlaytime = 0;
@@ -76,23 +79,23 @@ export const actions: Actions = {
                 // round to 2 decimal places
                 const playerTF2RecentPlaytimeHours = Number(playerTF2RecentPlaytimeHourshaha.toFixed(2));
 
-                if (playerTF2RecentPlaytimeHours === undefined || playerTF2RecentPlaytimeHours === null || playerTF2RecentPlaytimeHours === 0) {
-                    hasLife = true;
-                    return { success: true, message: 'has a life', playerUsername, id, playerTF2RecentPlaytimeHours }
-                }
+                // set all variables to false to shut the compiler
+                hasLife = false;
+                mightHaveLife = false;
+                desperatelyNeedsToTouchGrass = false;
 
                 if (playerTF2RecentPlaytimeHours < 10) {
                     hasLife = true;
-                    return { success: true, message: 'has a life', playerUsername, id, playerTF2RecentPlaytimeHours }
                 }
 
                 if (playerTF2RecentPlaytimeHours < 30) {
                     mightHaveLife = true;
-                    return { success: true, message: 'might have a life', playerUsername, id, playerTF2RecentPlaytimeHours }
                 } else {
                     desperatelyNeedsToTouchGrass = true;
-                    return { success: true, message: 'desperately needs to touch grass', playerUsername, id, playerTF2RecentPlaytimeHours }
                 }
+
+
+                return { success: true, mightHaveLife, desperatelyNeedsToTouchGrass, hasLife, playerUsername, id, playerTF2RecentPlaytimeHours }
             }
         }
     }

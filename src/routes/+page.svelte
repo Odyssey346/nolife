@@ -18,13 +18,13 @@
 
 {#if form?.success}
 <div class="flex flex-col items-center justify-center mt-5">
-{#if form?.message === "has a life"}
+{#if form?.hasLife}
 <h3 class="text-2xl font-bold text-center">player <span class="text-blue-400">{form?.playerUsername}</span> has <span class="text-green-400">a life</span></h3>
-{:else if form?.message === "might have a life"}
+{:else if form?.mightHaveLife}
 <h3 class="text-2xl font-bold text-center">player <span class="text-blue-400">{form?.playerUsername}</span> <span class="text-yellow-400">might have a life</span></h3>
-{:else if form?.message === "desperately needs to touch grass"}
+{:else if form?.desperatelyNeedsToTouchGrass}
 <h3 class="text-2xl font-bold text-center">player <span class="text-blue-400">{form?.playerUsername}</span> <span class="text-red-400">desperately needs to touch grass</span></h3>
-{:else if form?.message === "has a private account."}
+{:else if form?.privateAccount}
 <h3 class="text-2xl font-bold text-center">player <span class="text-blue-400">{form?.playerUsername}</span> <span class="text-red-400">has a private account.</span></h3>
 {/if}
 <p>{form?.playerTF2RecentPlaytimeHours} hours played recently</p>
@@ -33,7 +33,7 @@
 
 {#if form?.error}
 <div class="flex flex-col items-center justify-center mt-5">
-<h3 class="text-2xl font-bold text-center">Something went wrong. {form?.message}</h3>
+<h3 class="text-2xl font-bold text-center"><span class="text-red-400">something went wrong.</span> {form?.message}</h3>
 </div>
 {/if}
 
