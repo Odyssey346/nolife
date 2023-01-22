@@ -86,9 +86,7 @@ export const actions: Actions = {
 
                 if (playerTF2RecentPlaytimeHours < 10) {
                     hasLife = true;
-                }
-
-                if (playerTF2RecentPlaytimeHours < 30) {
+                } else if (playerTF2RecentPlaytimeHours < 30) {
                     mightHaveLife = true;
                 } else {
                     desperatelyNeedsToTouchGrass = true;
