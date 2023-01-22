@@ -6,7 +6,7 @@ import { env } from '$env/dynamic/private';
 export const actions: Actions = {
     check: async ({ request }) => {
         const data = await request.formData();
-        const name = data.get('name') as string;
+        let name = data.get('name') as string;
         let playerTF2RecentPlaytime: number;
         let hasLife: boolean;
         let mightHaveLife: boolean;
@@ -21,44 +21,39 @@ export const actions: Actions = {
         if (schema.validate({ name }).error) {
             return fail(400, { error: true, message: String(schema.validate(Object.fromEntries(data.entries())).error) });
         } else {
-            let id = name;
-            if (id.startsWith('https://')) {
+            if (name.startsWith('https://')) {
                 return fail(400, { error: true, message: 'Invalid ID' });
             } else {
                 function containsOnlyNumbers(str: string) {
                     return /^[0-9]+$/.test(str);
                 }
-                if (containsOnlyNumbers(id)) {
+                if (containsOnlyNumbers(name)) {
                     isSteamID64 = true;
                 } else {
                     isSteamID64 = false;
                 }
                 if (!isSteamID64) {
-                    const steamID64 = await fetch(`https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${env.STEAM_KEY}&vanityurl=${id}`).then((res) => res.json());
+                    const steamID64 = await fetch(`https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${env.STEAM_KEY}&vanityurl=${name}`).then((res) => res.json());
                     if (steamID64.response.success === 42) {
                         isSteamID64 = true;
                     } else {
-                        id = steamID64.response.steamid;
+                        name = steamID64.response.steamid;
                     }
                 }
 
                 // get username
-                const username = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${env.STEAM_KEY}&steamids=${id}`).then((res) => res.json());
+                const username = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${env.STEAM_KEY}&steamids=${name}`).then((res) => res.json());
                 if (username.response.players[0] === undefined) {
                     return fail(400, { error: true, message: 'player does not exist' });
                 }
                 playerUsername = username.response.players[0].personaname;
 
-                console.log(playerUsername)
-
-                console.log(id)
-
                 // ok lets get tf2 recent playtime
-                const tf2RecentPlaytime = await fetch(`https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?key=${env.STEAM_KEY}&steamid=${id}`).then((res) => res.json());
+                const tf2RecentPlaytime = await fetch(`https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?key=${env.STEAM_KEY}&steamid=${name}`).then((res) => res.json());
 
                 // if account is private
                 if (tf2RecentPlaytime === undefined || tf2RecentPlaytime === null || tf2RecentPlaytime.response === undefined || tf2RecentPlaytime.response === null || tf2RecentPlaytime.response.games === undefined || tf2RecentPlaytime.response.games === null || tf2RecentPlaytime.response.games.length === 0) {
-                    return { success: true, message: 'has a private account.', privateAccount: true, playerUsername, id, playerTF2RecentPlaytimeHours: 0 }
+                    return { success: true, message: 'has a private account.', privateAccount: true, playerUsername, name, playerTF2RecentPlaytimeHours: 0 }
                 }
 
                 playerTF2RecentPlaytime = 0;
@@ -71,15 +66,13 @@ export const actions: Actions = {
                     }
                 }
 
-
                 // get hours from playtime
                 const playerTF2RecentPlaytimeHourshaha = playerTF2RecentPlaytime / 60;
-
 
                 // round to 2 decimal places
                 const playerTF2RecentPlaytimeHours = Number(playerTF2RecentPlaytimeHourshaha.toFixed(2));
 
-                // set all variables to false to shut the compiler
+                // set all variables to false to shut the compiler (also probably a good idea somehow idk)
                 hasLife = false;
                 mightHaveLife = false;
                 desperatelyNeedsToTouchGrass = false;
@@ -92,8 +85,7 @@ export const actions: Actions = {
                     desperatelyNeedsToTouchGrass = true;
                 }
 
-
-                return { success: true, mightHaveLife, desperatelyNeedsToTouchGrass, hasLife, playerUsername, id, playerTF2RecentPlaytimeHours }
+                return { success: true, mightHaveLife, desperatelyNeedsToTouchGrass, hasLife, playerUsername, name, playerTF2RecentPlaytimeHours }
             }
         }
     }
